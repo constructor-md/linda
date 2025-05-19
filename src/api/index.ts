@@ -20,9 +20,18 @@ export const API_ROUTES = {
 
   // 聊天相关
   CHAT: {
+    // 发送消息
     SEND_MESSAGE: '/chat/message',
+    // 获取指定会话的历史消息
     GET_HISTORY: '/chat/history',
-    GET_SESSIONS: '/chat/sessions',
+  },
+
+  // 会话相关
+  SESSION: {
+    // 删除指定会话
+    DELETE: '/session/info',
+    // 获取会话列表
+    LIST: '/session/history',
   },
 }
 

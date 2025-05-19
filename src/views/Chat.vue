@@ -24,6 +24,9 @@ const handleClickOutside = (event: MouseEvent) => {
   }
 }
 
+// 当前选中的会话ID
+const currentSessionId = ref<string>('')
+
 // 组件挂载时添加点击事件监听和初始化WebSocket连接
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
@@ -31,10 +34,17 @@ onMounted(() => {
   ws.connect()
 })
 
-// 组件卸载时移除点击事件监听
+// 组件卸载时移除点击事件监听和WebSocket消息处理器
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
 })
+
+// 处理选择会话事件
+const handleSelectSession = (sessionId: string) => {
+  // 保存当前会话ID
+  currentSessionId.value = sessionId
+  // ChatRoom组件会自动获取历史消息
+}
 
 const router = useRouter()
 const logout = () => {
@@ -45,21 +55,29 @@ const logout = () => {
   // 跳转到登录页
   router.push('/')
 }
+
+/**
+ * 处理新建会话
+ */
+const handleNewChat = () => {
+  // 清空当前会话ID  触发聊天室组件清空聊天信息列表
+  currentSessionId.value = ''
+}
 </script>
 
 <template>
   <div class="chat-container">
     <div class="sidebar-wrapper">
-      <Sidebar />
+      <Sidebar @select-session="handleSelectSession" @new-chat="handleNewChat" />
     </div>
     <div class="main-content">
       <div class="avatar-dropdown">
         <img ref="avatarRef" src="/user.png" class="avatar" @click="toggleDropdown" />
         <div v-if="showDropdown" ref="dropdownRef" class="dropdown-menu">
-          <div class="dropdown-item" @click="logout">退出登录</div>
+          <div class="dropdown-item" @click="logout">Logout</div>
         </div>
       </div>
-      <ChatRoom />
+      <ChatRoom :sessionId="currentSessionId" />
     </div>
   </div>
 </template>

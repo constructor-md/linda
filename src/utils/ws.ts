@@ -9,6 +9,7 @@ import { WS_URL } from '@/api'
 class WebSocketManager {
   private static instance: WebSocketManager
   private wsClient: WebSocketClient | null = null
+  private messageHandlers: Array<(event: MessageEvent) => void> = []
 
   private constructor() {}
 
@@ -45,7 +46,7 @@ class WebSocketManager {
     this.wsClient.setHandlers({
       onOpen: () => {
         ElNotification({
-          title: "🌟 Let's Go!",
+          title: '🌟 Linda Online!',
           message:
             "Hey! You're back—time to level up your English! Ready for a fun chat? I'm all ears! 😊",
           type: 'success',
@@ -66,6 +67,12 @@ class WebSocketManager {
           type: 'error',
           duration: 6000,
         })
+      },
+      onMessage: (event) => {
+        // 调用所有注册的消息处理器
+        if (this.messageHandlers.length > 0) {
+          this.messageHandlers.forEach((handler) => handler(event))
+        }
       },
     })
 
@@ -89,6 +96,51 @@ class WebSocketManager {
    */
   public send(data: string | ArrayBufferLike | Blob | ArrayBufferView): void {
     this.wsClient?.send(data)
+  }
+
+  /**
+   * 添加WebSocket消息处理器
+   * @param handler 消息处理函数
+   * @returns 处理器ID，用于后续移除处理器
+   */
+  public addMessageHandler(handler: (event: MessageEvent) => void): number {
+    if (handler) {
+      this.messageHandlers.push(handler)
+      return this.messageHandlers.length - 1
+    }
+    return -1
+  }
+
+  /**
+   * 移除WebSocket消息处理器
+   * @param handler 要移除的消息处理函数
+   */
+  public removeMessageHandler(handler: (event: MessageEvent) => void): void {
+    const index = this.messageHandlers.indexOf(handler)
+    if (index !== -1) {
+      this.messageHandlers.splice(index, 1)
+    }
+  }
+
+  /**
+   * 清空所有WebSocket消息处理器
+   */
+  public clearMessageHandlers(): void {
+    this.messageHandlers = []
+  }
+
+  /**
+   * 设置WebSocket消息处理器（兼容旧API）
+   * @param handler 消息处理函数
+   * @deprecated 请使用addMessageHandler和removeMessageHandler
+   */
+  public setMessageHandler(handler: (event: MessageEvent) => void | null): void {
+    // 清空现有处理器
+    this.messageHandlers = []
+    // 如果提供了新处理器，则添加它
+    if (handler) {
+      this.messageHandlers.push(handler)
+    }
   }
 }
 

@@ -17,6 +17,14 @@ export interface RegisterParams {
 }
 
 /**
+ * 聊天消息接口参数
+ */
+export interface SendMessageParams {
+  sessionId: string
+  content: string
+}
+
+/**
  * HTTP请求配置接口
  */
 export interface RequestConfig extends AxiosRequestConfig {
