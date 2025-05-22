@@ -370,9 +370,9 @@ onUnmounted(() => {
 .chat-room {
   display: flex;
   flex-direction: column;
-  width: 80%;
-  height: 80%;
-  margin: 60px auto 0;
+  width: 87%;
+  height: 90%;
+  margin: 30px auto 0;
   background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -461,6 +461,7 @@ onUnmounted(() => {
   padding: 10px 16px;
   border-radius: 18px;
   word-break: break-word;
+  white-space: pre-wrap;
   line-height: 1.4;
 }
 
